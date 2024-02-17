@@ -1,0 +1,23 @@
+version: '3'
+services:
+  web:
+    build:
+      context: ./next-stock
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./next-stock:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=secret
+      - MYSQL_DB=mydatabase
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: mydatabase
+    ports:
+      - "3306:3306"
