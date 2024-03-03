@@ -1,19 +1,4 @@
 services:
- app:
-    tty: true
-    networks:
-      - app_network
-    build:
-      context: ./next-stock
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./next-stock:/usr/src/app
-      - /usr/src/app/node_modules
-    command: npm run dev
-    depends_on:
-      - db
  db:
    image: postgres:15
    hostname: db
@@ -32,6 +17,12 @@ services:
    volumes:
      - ./postgresql/data:/var/lib/postgresql/data
      - ./sql:/docker-entrypoint-initdb.d
+   healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d mydb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
 networks:
  app_network:

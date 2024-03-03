@@ -14,6 +14,29 @@ model Organization {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
-  
   @@map("organizations")
+}
+
+model Role {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  users User[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  @@map("roles")
+}
+
+model User {
+  id    Int    @id @default(autoincrement())
+  first_name String
+  last_name  String   
+  email String @unique
+  password String
+  role_id   Int
+  role      Role     @relation(fields: [role_id], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  @@map("users")
 }

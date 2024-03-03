@@ -9,6 +9,25 @@ async function main() {
       phone: '12345678',
     },
   });
+
+  await prisma.role.upsert({
+    where: { id: 1 },
+    update: { name: 'Owner' },
+    create: {
+      id: 1,
+      name: 'Owner',
+    },
+  });
+
+  await prisma.role.upsert({
+    where: { id: 2 },
+    update: { name: 'Member' },
+    create: {
+      id: 2,
+      name: 'Member',
+    },
+  });
+
   console.log(`Created Organaizations`);
 }
 
