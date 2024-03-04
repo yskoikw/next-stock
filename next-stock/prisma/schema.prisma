@@ -8,9 +8,10 @@ datasource db {
 }
 
 model Organization {
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(uuid())
   name      String
   phone     String?
+  users User[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
@@ -18,7 +19,7 @@ model Organization {
 }
 
 model Role {
-  id    Int    @id @default(autoincrement())
+  id    String @id @default(uuid())
   name  String @unique
   users User[]
   createdAt DateTime @default(now()) @map("created_at")
@@ -28,15 +29,55 @@ model Role {
 }
 
 model User {
-  id    Int    @id @default(autoincrement())
-  first_name String
-  last_name  String   
+  id    String    @id @default(uuid())
+  firstName String @map("first_name")
+  lastName String @map("last_name")
   email String @unique
   password String
-  role_id   Int
-  role      Role     @relation(fields: [role_id], references: [id])
+  organizationId String @map("organization_id")
+  organization Organization @relation(fields: [organizationId], references: [id])
+  roleId   String @map("role_id")
+  role      Role     @relation(fields: [roleId], references: [id])
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
+  sessions  Session[]
   @@map("users")
+}
+
+model Session {
+  id        String @id
+  userId    String @map("user_id")
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("sessions")
+}
+
+
+
+model Product {
+  id              Int             @id @default(autoincrement())
+  name            String
+  description     String?
+  organizations   Organization    @relation(fields: [organizationId], references: [id])
+  organizationId  Int
+  ProductStock    ProductStock[]  // 商品と在庫の中間テーブルを関連付ける
+}
+
+model Stock {
+  id              Int             @id @default(autoincrement())
+  quantity        Int
+  organizations   Organization    @relation(fields: [organizationId], references: [id])
+  organizationId  Int
+  ProductStock    ProductStock[]  // 商品と在庫の中間テーブルを関連付ける
+}
+
+// 商品と在庫の多対多関係を表現する中間テーブル
+model ProductStock {
+  productId Int
+  stockId   Int
+  product   Product @relation(fields: [productId], references: [id])
+  stock     Stock   @relation(fields: [stockId], references: [id])
+
+  @@id([productId, stockId])
 }

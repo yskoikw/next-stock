@@ -1,62 +1,100 @@
-import { authConfig } from './auth.config';
+import { Argon2id } from "oslo/password";
 import bcrypt from 'bcryptjs';
-import Credentials from 'next-auth/providers/credentials';
-import NextAuth from 'next-auth';
+import { cookies } from "next/headers";
+import { cache } from "react";
+import { Lucia, Session, User } from "lucia";
+import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from '@prisma/client';
-import type { User } from '@/app/lib/definitions';
 import { z } from 'zod';
 
+const client = new PrismaClient();
+const adapter = new PrismaAdapter(client.session, client.user);
 const prisma = new PrismaClient();
+
+export const lucia = new Lucia(adapter, {
+	sessionCookie: {
+		// this sets cookies with super long expiration
+		// since Next.js doesn't allow Lucia to extend cookie expiration when rendering pages
+		expires: false,
+		attributes: {
+			// set to `true` when using HTTPS
+			secure: process.env.NODE_ENV === "production"
+		}
+	},
+  getUserAttributes: (attributes) => {
+		return {
+			// attributes has the type of DatabaseUserAttributes
+			firstName: attributes.firstName
+		};
+	}
+});
 
 
 /**
- * HACK: 
- * Although we're using the Credentials provider, it's generally recommended to use alternative providers 
- * such as OAuth or email providers.
- * https://authjs.dev/getting-started/providers
+ * TODO: use validateRequest in middleware
  */
+export const validateRequest = cache(
+	async (): Promise<{ user: User; session: Session } | { user: null; session: null }> => {
+		const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;
+		if (!sessionId) {
+			return {
+				user: null,
+				session: null
+			};
+		}
 
-async function getUser(email: string): Promise<User | null> {
-  try {
-    const user = await prisma.user.findUnique({
+		const result = await lucia.validateSession(sessionId);
+		// next.js throws when you attempt to set cookie when rendering page
+		try {
+			if (result.session && result.session.fresh) {
+				const sessionCookie = lucia.createSessionCookie(result.session.id);
+				cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+			}
+			if (!result.session) {
+				const sessionCookie = lucia.createBlankSessionCookie();
+				cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+			}
+		} catch {}
+    console.log(result);
+		return result;
+	}
+);
+
+declare module "lucia" {
+	interface Register {
+		Lucia: typeof lucia;
+    DatabaseUserAttributes: DatabaseUserAttributes;
+	}
+}
+
+interface DatabaseUserAttributes {
+	firstName: string;
+}
+
+
+// login
+export async function login( formData: FormData) {
+	const email = formData.get("email");
+  const password = formData.get("password");
+	if ( typeof email !== "string" || email.length < 3 || email.length > 50 ) {
+		return null;
+	}
+	if (typeof password !== "string" || password.length < 6 || password.length > 255) {
+		return null;
+	}
+
+  const user = await prisma.user.findUnique({
       where: {
         email: email,
       },
-    });
-    if(user) {
-      const userWithIdAsString = {
-        ...user,
-        id: user.id.toString(),
-      };
-      return userWithIdAsString;
-    }
-    return null;
-  } catch (error) {
-    console.error('Failed to fetch user:', error);
-    throw new Error('Failed to fetch user.');
-  }
+  });
+  if(!user) return null;
+
+	const validPassword = await new Argon2id().verify(user.password, password);
+	if (!validPassword) null;
+  const userId = user.id;
+	const session = await lucia.createSession(userId, {});
+	const sessionCookie = lucia.createSessionCookie(session.id);
+	cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+  return user;
 }
-
-export const { auth, signIn, signOut } = NextAuth({
-  ...authConfig,
-  providers: [
-    Credentials({
-      async authorize(credentials) {
-
-        const parsedCredentials = z
-          .object({ email: z.string().email(), password: z.string().min(5) })
-          .safeParse(credentials);
-        if (parsedCredentials.success) {
-          const { email, password } = parsedCredentials.data;
-          const user = await getUser(email);
-          if (!user) return null;
-          const passwordsMatch = await bcrypt.compare(password, user.password);
-          if (passwordsMatch) return user;
-        }
-        console.log('Invalid credentials');
-        return null;
-      },
-    }),
-  ],
-
-});

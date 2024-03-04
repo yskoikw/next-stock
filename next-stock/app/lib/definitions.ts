@@ -2,19 +2,25 @@ export type Organization = {
   id: string;
   name: string;
   phone: string;
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
   deletedAt: Date | null;
 };
 
 export type User = {
   id: string;
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
-  role_id: number;
+  roleId: number;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
+};
+
+export type Session = {
+  id: string;
+  userId: string;
+  expiresAt: Date;
 };

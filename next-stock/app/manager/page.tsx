@@ -1,22 +1,18 @@
 import SideNav from "../ui/sidenav";
-import { useSession } from "next-auth/react";
+import { validateRequest } from "@/auth";
+import { redirect } from "next/navigation";
 
-export default function Page() {
-    
-    const { data: session, status } = useSession();
-  
-    // if (status === "loading") {
-    //   return <p>Loading...</p>;
-    // }
-  
-    // if (!session) {
-    //   return <p>Access Denied</p>;
-    // }
-  
-    return (
-      <div>
-        <SideNav />
-        {/* <p>Hello, {session.user.name}! This is {session.user.organization}'s page.</p> */}
-      </div>
-    );
-  }
+export default async function Page() {
+	const { user } = await validateRequest();
+	if (!user) {
+		return redirect("/login");
+	}
+  // console.log(user);
+
+	return (
+    <div>
+      <SideNav />
+      <h1>Hi, {user.firstName}!</h1>
+    </div>
+  );
+}

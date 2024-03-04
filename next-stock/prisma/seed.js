@@ -11,19 +11,19 @@ async function main() {
   });
 
   await prisma.role.upsert({
-    where: { id: 1 },
+    where: { id: '1' },
     update: { name: 'Owner' },
     create: {
-      id: 1,
+      id: '1',
       name: 'Owner',
     },
   });
 
   await prisma.role.upsert({
-    where: { id: 2 },
+    where: { id: '2' },
     update: { name: 'Member' },
     create: {
-      id: 2,
+      id: '2',
       name: 'Member',
     },
   });
