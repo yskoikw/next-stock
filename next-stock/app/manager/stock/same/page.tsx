@@ -1,6 +1,5 @@
 'use client'
 import { createProductAndStock } from '@/app/lib/stock/actions';
-import { PrismaClient } from '@prisma/client';
 import { useFormState } from "react-dom";
 
 export default function Page() {

@@ -1,18 +1,12 @@
 import SideNav from "../ui/sidenav";
-import { validateRequest } from "@/auth";
-import { redirect } from "next/navigation";
+import { getSessionUser } from "@/app/lib/actions"
 
 export default async function Page() {
-	const { user } = await validateRequest();
-	if (!user) {
-		return redirect("/login");
-	}
-  // console.log(user);
-
+  const user = await getSessionUser();
 	return (
     <div>
       <SideNav />
-      <h1>Hi, {user.firstName}!</h1>
+      <h1>Hi, {user?.firstName}!</h1>
     </div>
   );
 }

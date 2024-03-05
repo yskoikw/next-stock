@@ -1,6 +1,6 @@
 "use server";
 import { PrismaClient } from '@prisma/client';
-import { getOrganizationId } from '@/auth';
+import { getOrganizationId } from '@/app/lib/actions';
 
 const prisma = new PrismaClient();
 

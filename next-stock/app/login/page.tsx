@@ -2,11 +2,6 @@
 import { authenticate } from '@/app/lib/actions';
 import { PrismaClient } from '@prisma/client';
 import { useFormState, useFormStatus } from "react-dom";
-
-const prisma = new PrismaClient();
-const initialState = {
-	message: "",
-};
  
 export default function Page() {
   const [errorMessage, dispatch] = useFormState(authenticate, undefined)
@@ -24,14 +19,3 @@ export default function Page() {
     </form>
   )
 }
-// export default async function Page() {
-// 	const [state, formAction] = useFormState(login, initialState);
-// 	return (
-// 		<>
-// 			<h1>Sign in</h1>
-// 			<form action={formAction}>
-				
-// 			</form>
-// 		</>
-// 	);
-// }

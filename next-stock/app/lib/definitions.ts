@@ -13,7 +13,8 @@ export type User = {
   lastName: string;
   email: string;
   password: string;
-  roleId: number;
+  organizationId: string;
+  roleId: string;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;

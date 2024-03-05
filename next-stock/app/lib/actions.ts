@@ -1,21 +1,29 @@
-"use server";
+'use server'
 import bcrypt from 'bcryptjs';
+import { signIn } from '@/auth';
+import { AuthError } from 'next-auth';
 import { PrismaClient } from '@prisma/client';
-import { revalidatePath } from "next/cache";
-import { Argon2id } from "oslo/password";
-import { cookies } from "next/headers";
-import { lucia, login, validateRequest } from "@/auth";
-import type { NextRequest } from 'next/server'
-import { redirect } from "next/navigation";
+import type { User } from '@/app/lib/definitions';
+import { auth } from "@/auth.config";
 
 const prisma = new PrismaClient();
 
-export async function authenticate(_currentState: unknown, formData: FormData) {
+export async function authenticate(
+  prevState: string | undefined,
+  formData: FormData,
+) {
   try {
-    const user = await login(formData);
-    if(!user) return 'invaild';
+    await signIn('credentials', formData);
   } catch (error) {
-    return 'Something went wrong.'
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case 'CredentialsSignin':
+          return 'Invalid credentials.';
+        default:
+          return 'Something went wrong.';
+      }
+    }
+    throw error;
   }
 }
 
@@ -52,7 +60,7 @@ export async function signup(
 			message: "Invalid password"
 		};
 	}
-	const hashedPassword = await new Argon2id().hash(password);
+	const hashedPassword = await bcrypt.hash(password, 10);
 	console.log('validate finish');
   const organization = await prisma.organization.create({
     data: {
@@ -71,28 +79,30 @@ export async function signup(
       lastName: lastName,
     },
   });
-
-  const userId = user.id.toString();
-	const session = await lucia.createSession(userId, {});
-	const sessionCookie = lucia.createSessionCookie(session.id);
-	cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 	// return redirect("/");
   return { message: `success` };
 }
 
+export async function getSessionUser(): Promise<User | null> {
+  const session = await auth();
+  const email = session?.user?.email;
+  if(!email) return null;
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
+  return user ?? null;
+}
 
-// logout
-export async function logout() {
-	const { session } = await validateRequest();
-	if (!session) {
-		return {
-			error: "Unauthorized"
-		};
-	}
-
-	await lucia.invalidateSession(session.id);
-  // remove session cookie by setting a blank session cookie
-	const sessionCookie = lucia.createBlankSessionCookie();
-	cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-	return redirect("/login");
+export async function getOrganizationId(): Promise<String | null> {
+  const session = await auth();
+  const email = session?.user?.email;
+  if(!email) return null;
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
+  return user?.organizationId ?? null;
 }
