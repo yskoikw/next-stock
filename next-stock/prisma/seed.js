@@ -3,13 +3,6 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function main() {
-  const sampleOrg = await prisma.Organization.create({
-    data: {
-      name: 'abc inc',
-      phone: '12345678',
-    },
-  });
-
   await prisma.role.upsert({
     where: { id: '1' },
     update: { name: 'Owner' },
@@ -28,7 +21,7 @@ async function main() {
     },
   });
 
-  console.log(`Created Organaizations`);
+  console.log(`Created seed datas`);
 }
 
 main()

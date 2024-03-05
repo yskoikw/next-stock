@@ -1,5 +1,6 @@
 "use server";
 import { PrismaClient } from '@prisma/client';
+import type { Stock } from '@prisma/client';
 import { getOrganizationId } from '@/app/lib/actions';
 
 const prisma = new PrismaClient();
@@ -38,4 +39,15 @@ export async function createProductAndStock(
     },
   });
   return  'success';
+}
+
+export async function getStocks(): Promise<Stock[] | null> {
+  const organizationId = await getOrganizationId();
+  if(!organizationId) return null;
+  const stocks = await prisma.stock.findMany({
+    where: {
+      organizationId: organizationId,
+    },
+  })
+  return stocks ?? null;
 }

@@ -95,7 +95,7 @@ export async function getSessionUser(): Promise<User | null> {
   return user ?? null;
 }
 
-export async function getOrganizationId(): Promise<String | null> {
+export async function getOrganizationId(): Promise<string | null> {
   const session = await auth();
   const email = session?.user?.email;
   if(!email) return null;
