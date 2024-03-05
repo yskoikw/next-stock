@@ -8,7 +8,7 @@ const initialState = {
   message: "",
 };
 
-export default async function Page() {
+export default function Page() {
   const [state, formAction] = useFormState(signup, initialState);
 	return (
 		<>
@@ -32,8 +32,4 @@ export default async function Page() {
 			</form>
 		</>
 	);
-}
-
-interface ActionResult {
-	error: string;
 }
