@@ -43,6 +43,7 @@ model User {
   updatedAt DateTime @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
   sessions  Session[]
+  purchases Purchase[]
   @@map("users")
 }
 
@@ -65,5 +66,20 @@ model Stock {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
+  purchases Purchase[]
   @@map("stocks")
+}
+
+model Purchase {
+  id String          @id @default(uuid())
+  stockId String @map("stock_id")
+  stock Stock @relation(fields: [stockId], references: [id])
+  userId String @map("uesr_id")
+  user User @relation(fields: [userId], references: [id])
+  quantity Int
+  cost Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  @@map("purchases")
 }
