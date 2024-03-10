@@ -1,8 +1,7 @@
 import SideNav from "@/app/ui/sidenav";
-import { getOrganizationId } from "@/app/lib/actions";
 import { getStocks } from "@/app/lib/stock/actions";
+import Link from 'next/link';
 import type { Stock } from '@prisma/client';
-import { table } from "console";
 
 export default function Page() {
 	return (
@@ -40,6 +39,20 @@ export async function Stocks() {
           <td>{stock.quantity}</td>
           <td>{stock.price}</td>
           <td>{stock.asset}</td>
+          <td>
+          <Link
+            href={`/manager/stock/${stock.id}`}
+            className="rounded-md border p-2 hover:bg-gray-100"
+          >
+            Detail
+          </Link>
+          <Link
+            href={`/manager/stock/${stock.id}/purchase`}
+            className="rounded-md border p-2 hover:bg-gray-100"
+          >
+            Purchase {/* ENG: Delivery, Purchase, Edit? */}
+          </Link>
+          </td>
         </tr>
       ))}
       </tbody>

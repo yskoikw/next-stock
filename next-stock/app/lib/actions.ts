@@ -95,6 +95,18 @@ export async function getSessionUser(): Promise<User | null> {
   return user ?? null;
 }
 
+export async function getUserId(): Promise<string | null> {
+  const session = await auth();
+  const email = session?.user?.email;
+  if(!email) return null;
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
+  return user?.id ?? null;
+}
+
 export async function getOrganizationId(): Promise<string | null> {
   const session = await auth();
   const email = session?.user?.email;
@@ -105,4 +117,8 @@ export async function getOrganizationId(): Promise<string | null> {
     },
   });
   return user?.organizationId ?? null;
+}
+
+function toTimeZone(date: Date, timeZone: string) {
+  return new Date(date.toLocaleString('en-US', { timeZone: timeZone }));
 }
