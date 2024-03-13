@@ -8,14 +8,15 @@ datasource db {
 }
 
 model Organization {
-  id        String    @id @default(uuid())
-  name      String
-  phone     String?
-  users     User[]
-  stocks    Stock[]
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+  id                String             @id @default(uuid())
+  name              String
+  phone             String?
+  users             User[]
+  stocks            Stock[]
+  salesTransactions SalesTransaction[]
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+  deletedAt         DateTime?          @map("deleted_at")
 
   @@map("organizations")
 }
@@ -32,20 +33,21 @@ model Role {
 }
 
 model User {
-  id             String       @id @default(uuid())
-  firstName      String       @map("first_name")
-  lastName       String       @map("last_name")
-  email          String       @unique
-  password       String
-  organizationId String       @map("organization_id")
-  organization   Organization @relation(fields: [organizationId], references: [id])
-  roleId         String       @map("role_id")
-  role           Role         @relation(fields: [roleId], references: [id])
-  createdAt      DateTime     @default(now()) @map("created_at")
-  updatedAt      DateTime     @updatedAt @map("updated_at")
-  deletedAt      DateTime?    @map("deleted_at")
-  sessions       Session[]
-  purchases      Purchase[]
+  id                String             @id @default(uuid())
+  firstName         String             @map("first_name")
+  lastName          String             @map("last_name")
+  email             String             @unique
+  password          String
+  organizationId    String             @map("organization_id")
+  organization      Organization       @relation(fields: [organizationId], references: [id])
+  roleId            String             @map("role_id")
+  role              Role               @relation(fields: [roleId], references: [id])
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+  deletedAt         DateTime?          @map("deleted_at")
+  sessions          Session[]
+  purchases         Purchase[]
+  salesTransactions SalesTransaction[]
 
   @@map("users")
 }
@@ -71,6 +73,7 @@ model Stock {
   updatedAt      DateTime     @updatedAt @map("updated_at")
   deletedAt      DateTime?    @map("deleted_at")
   purchases      Purchase[]
+  saleItem       SaleItem[]
 
   @@map("stocks")
 }
@@ -88,4 +91,50 @@ model Purchase {
   deletedAt DateTime? @map("deleted_at")
 
   @@map("purchases")
+}
+
+model PaymentMethod {
+  id                String             @id @default(uuid())
+  name              String
+  salesTransactions SalesTransaction[]
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+  deletedAt         DateTime?          @map("deleted_at")
+
+  @@map("payment_methods")
+}
+
+model SalesTransaction {
+  id              String        @id @default(uuid())
+  organizationId  String        @map("organization_id")
+  organization    Organization  @relation(fields: [organizationId], references: [id])
+  userId          String        @map("uesr_id")
+  user            User          @relation(fields: [userId], references: [id])
+  paymentMethodId String        @map("payment_method_id")
+  paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+  discountAmount  Int
+  taxAmount       Int
+  tipAmount       Int
+  totalAmount     Int
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  deletedAt       DateTime?     @map("deleted_at")
+  saleItem        SaleItem[]
+
+  @@map("sales_transactions")
+}
+
+model SaleItem {
+  id                 String           @id @default(uuid())
+  stockId            String           @map("stock_id")
+  stock              Stock            @relation(fields: [stockId], references: [id])
+  SalesTransactionId String           @map("sales_transaction_id")
+  salesTransaction   SalesTransaction @relation(fields: [SalesTransactionId], references: [id])
+  quantity           Int
+  price              Int
+  createdAt          DateTime         @default(now()) @map("created_at")
+  updatedAt          DateTime         @updatedAt @map("updated_at")
+  deletedAt          DateTime?        @map("deleted_at")
+
+  @@map("sale_item")
 }
