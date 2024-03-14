@@ -1,6 +1,6 @@
 'use client'
 import { useFormState } from "react-dom";
-import { createPurchase, getStockById } from "@/app/lib/stock/actions";
+import { createPurchase } from "@/app/lib/stock/actions";
 
 interface PurchaseFormProps {
     stockId: string;

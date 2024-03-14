@@ -13,7 +13,7 @@ model Organization {
   phone             String?
   users             User[]
   stocks            Stock[]
-  salesTransactions SalesTransaction[]
+  saleTransactions  SaleTransaction[]
   createdAt         DateTime           @default(now()) @map("created_at")
   updatedAt         DateTime           @updatedAt @map("updated_at")
   deletedAt         DateTime?          @map("deleted_at")
@@ -47,7 +47,7 @@ model User {
   deletedAt         DateTime?          @map("deleted_at")
   sessions          Session[]
   purchases         Purchase[]
-  salesTransactions SalesTransaction[]
+  saleTransactions  SaleTransaction[]
 
   @@map("users")
 }
@@ -96,7 +96,7 @@ model Purchase {
 model PaymentMethod {
   id                String             @id @default(uuid())
   name              String
-  salesTransactions SalesTransaction[]
+  saleTransactions  SaleTransaction[]
   createdAt         DateTime           @default(now()) @map("created_at")
   updatedAt         DateTime           @updatedAt @map("updated_at")
   deletedAt         DateTime?          @map("deleted_at")
@@ -104,7 +104,7 @@ model PaymentMethod {
   @@map("payment_methods")
 }
 
-model SalesTransaction {
+model SaleTransaction {
   id              String        @id @default(uuid())
   organizationId  String        @map("organization_id")
   organization    Organization  @relation(fields: [organizationId], references: [id])
@@ -121,17 +121,18 @@ model SalesTransaction {
   deletedAt       DateTime?     @map("deleted_at")
   saleItem        SaleItem[]
 
-  @@map("sales_transactions")
+  @@map("sale_transactions")
 }
 
 model SaleItem {
   id                 String           @id @default(uuid())
   stockId            String           @map("stock_id")
   stock              Stock            @relation(fields: [stockId], references: [id])
-  SalesTransactionId String           @map("sales_transaction_id")
-  salesTransaction   SalesTransaction @relation(fields: [SalesTransactionId], references: [id])
+  saleTransactionId  String           @map("sale_transaction_id")
+  saleTransaction    SaleTransaction @relation(fields: [saleTransactionId], references: [id])
   quantity           Int
   price              Int
+  cost               Int
   createdAt          DateTime         @default(now()) @map("created_at")
   updatedAt          DateTime         @updatedAt @map("updated_at")
   deletedAt          DateTime?        @map("deleted_at")

@@ -1,5 +1,6 @@
 
 'use client'
+import { CONSTANTS } from '@/app/constants';
 import { getPurchases } from "@/app/lib/stock/actions";
 import React, { useEffect, useState } from 'react';
 
@@ -21,6 +22,7 @@ type FechedPurchase = {
 export default function PurchaseHistorytable(prop: {stockId: string}) {
     "use client"
     const [purchases, setPurchases] = useState<FechedPurchase[]>([]);
+    const multiplier = CONSTANTS.CAD_MULTIPLIER;
 
     useEffect(() => {
       async function fetchPurchases() {
@@ -49,7 +51,7 @@ export default function PurchaseHistorytable(prop: {stockId: string}) {
                         <tr key={purchase.id}>
                             <td>{changeDateFormat(purchase.createdAt)}</td>
                             <td>{purchase.quantity}</td>
-                            <td>{purchase.cost}</td>
+                            <td>{purchase.cost > 0 ? purchase.cost / multiplier : 0}</td>
                             <td>{purchase.user.firstName} {purchase.user.lastName}</td>
                         </tr>
                     ))

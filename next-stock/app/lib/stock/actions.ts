@@ -1,4 +1,5 @@
 "use server";
+import { CONSTANTS } from '@/app/constants';
 import { getOrganizationId, getUserId } from '@/app/lib/actions';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
@@ -37,21 +38,24 @@ export async function createProductAndStock(
 ) {
   const organizationId = await getOrganizationId();
   const name = formData.get("name");
-  const price = Number(formData.get("price"));
+  const inputedPrice = Number(formData.get("price"));
   const quantity = Number(formData.get("quantity"));
-  const asset = Number(formData.get("asset"));
+  const inputedAsset = Number(formData.get("asset"));
 	if (
     typeof organizationId !== "string" ||
     typeof name !== "string" ||
-    typeof price !== "number" ||
+    typeof inputedPrice !== "number" ||
     typeof quantity !== "number" ||
-    typeof asset !== "number" ||
-    price < 0 ||
+    typeof inputedAsset !== "number" ||
+    inputedPrice < 0 ||
     quantity < 0 ||
-    asset < 0
+    inputedAsset < 0
 	) {
 		return "Invalid value";
 	}
+
+  const price = inputedPrice * CONSTANTS.CAD_MULTIPLIER;
+  const asset = inputedAsset * CONSTANTS.CAD_MULTIPLIER;
 
   const stock = await prisma.stock.create({
     data: {
@@ -73,19 +77,19 @@ export async function createPurchase(
   const organizationId = await getOrganizationId();
   const stockId = formData.get("stockId");
   const quantity = Number(formData.get("quantity"));
-  const cost = Number(formData.get("cost"));
+  const inputedCost = Number(formData.get("cost"));
 	if (
     typeof organizationId !== "string" ||
     typeof userId !== "string" ||
     typeof stockId !== "string" ||
     typeof quantity !== "number" ||
-    typeof cost !== "number" ||
+    typeof inputedCost !== "number" ||
     quantity <= 0 ||
-    cost < 0
+    inputedCost < 0
 	) {
 		return "Invalid value";
 	}
-
+  const cost = inputedCost * CONSTANTS.CAD_MULTIPLIER;
   const currentStock = await getStockById(stockId);
   if(!currentStock || currentStock.organizationId !== organizationId) return "Unexpected error";
   const purchase = await prisma.purchase.create({

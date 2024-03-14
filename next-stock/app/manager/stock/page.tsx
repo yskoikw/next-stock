@@ -1,3 +1,4 @@
+import { CONSTANTS } from '@/app/constants';
 import SideNav from "@/app/ui/sidenav";
 import { getStocks } from "@/app/lib/stock/actions";
 import Link from 'next/link';
@@ -21,6 +22,7 @@ export default function Page() {
 
 export async function Stocks() {
   const stocks = await getStocks();
+  const multiplier = CONSTANTS.CAD_MULTIPLIER;
   if(!stocks) return null;
   return (
     <table>
@@ -37,8 +39,8 @@ export async function Stocks() {
         <tr>
           <td>{stock.name}</td>
           <td>{stock.quantity}</td>
-          <td>{stock.price}</td>
-          <td>{stock.asset}</td>
+          <td>{stock.price / multiplier}</td>
+          <td>{stock.asset / multiplier}</td>
           <td>
           <Link
             href={`/manager/stock/${stock.id}`}

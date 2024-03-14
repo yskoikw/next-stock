@@ -10,7 +10,7 @@ CREATE TABLE "payment_methods" (
 );
 
 -- CreateTable
-CREATE TABLE "sales_transactions" (
+CREATE TABLE "sale_transactions" (
     "id" TEXT NOT NULL,
     "organization_id" TEXT NOT NULL,
     "uesr_id" TEXT NOT NULL,
@@ -23,14 +23,14 @@ CREATE TABLE "sales_transactions" (
     "updated_at" TIMESTAMP(3) NOT NULL,
     "deleted_at" TIMESTAMP(3),
 
-    CONSTRAINT "sales_transactions_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "sale_transactions_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "sale_item" (
     "id" TEXT NOT NULL,
     "stock_id" TEXT NOT NULL,
-    "sales_transaction_id" TEXT NOT NULL,
+    "sale_transaction_id" TEXT NOT NULL,
     "quantity" INTEGER NOT NULL,
     "price" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -41,16 +41,16 @@ CREATE TABLE "sale_item" (
 );
 
 -- AddForeignKey
-ALTER TABLE "sales_transactions" ADD CONSTRAINT "sales_transactions_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "organizations"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "sale_transactions" ADD CONSTRAINT "sale_transactions_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "organizations"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "sales_transactions" ADD CONSTRAINT "sales_transactions_uesr_id_fkey" FOREIGN KEY ("uesr_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "sale_transactions" ADD CONSTRAINT "sale_transactions_uesr_id_fkey" FOREIGN KEY ("uesr_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "sales_transactions" ADD CONSTRAINT "sales_transactions_payment_method_id_fkey" FOREIGN KEY ("payment_method_id") REFERENCES "payment_methods"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "sale_transactions" ADD CONSTRAINT "sale_transactions_payment_method_id_fkey" FOREIGN KEY ("payment_method_id") REFERENCES "payment_methods"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "sale_item" ADD CONSTRAINT "sale_item_stock_id_fkey" FOREIGN KEY ("stock_id") REFERENCES "stocks"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "sale_item" ADD CONSTRAINT "sale_item_sales_transaction_id_fkey" FOREIGN KEY ("sales_transaction_id") REFERENCES "sales_transactions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "sale_item" ADD CONSTRAINT "sale_item_sale_transaction_id_fkey" FOREIGN KEY ("sale_transaction_id") REFERENCES "sale_transactions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
