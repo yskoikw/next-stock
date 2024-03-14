@@ -25,3 +25,36 @@ export type Session = {
   userId: string;
   expiresAt: Date;
 };
+
+export type FechedSaleTransactions = {
+  id: string;
+  organizationId: string;
+  userId: string;
+  paymentMethodId: string;
+  discountAmount: number;
+  taxAmount: number;
+  tipAmount: number;
+  subTotalAmount: number;
+  totalAmount: number;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null; 
+  saleItem: 
+      {
+          id: string;
+          stockId: string;
+          saleTransactionId: string;
+          quantity: number;
+          price: number;
+          cost: number;
+          createdAt: Date;
+          updatedAt: Date;
+          deletedAt: Date | null;
+          stock: { name: string ;};
+      }[];
+  user: {
+     firstName: string;
+     lastName: string;
+  };
+  paymentMethod: { name: string; };
+};

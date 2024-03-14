@@ -1,6 +1,7 @@
 "use server";
 import { CONSTANTS } from '@/app/constants';
 import { getOrganizationId, getSessionUser } from '@/app/lib/actions';
+import { FechedSaleTransactions } from '@/app/lib/definitions';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { PrismaClient } from '@prisma/client';
@@ -15,6 +16,48 @@ export async function getPaymentMethods(): Promise<PaymentMethod[] | null> {
     return paymentMethods ?? null;
   }
 
+export async function getSaleTransactions() : Promise<FechedSaleTransactions[] | null> {
+    const organizationId = await getOrganizationId();
+    if(!organizationId) return null;
+    const saleTransaction = await prisma.saleTransaction.findMany({
+        where: {
+            organizationId: organizationId,
+        },
+        orderBy: {
+            createdAt: 'desc',
+          },
+        include: {
+            saleItem: {
+                include: {
+                    stock: {
+                        select: {name: true,}
+                    },
+                }
+            }, 
+            user: {
+                select: {firstName: true, lastName: true,},
+            },
+            paymentMethod: {
+                select: {name: true,},
+            },
+        }
+    });
+    return saleTransaction;
+}
+
+export async function getTransactionById() : Promise<SaleTransaction | null> {
+    const id = '6748f76a-f641-4bb8-bde1-6ee2dca18f1c'; //
+    const saleTransaction = await prisma.saleTransaction.findUnique({
+        where: {
+            id: id,
+        },
+        include: {
+            saleItem: true,
+        }
+    });
+    return saleTransaction;
+}
+
 
 //sign up & create org
 export async function createSale(
@@ -27,6 +70,7 @@ export async function createSale(
     const taxRate = 18; // TODO: should be defined by organization
     const tipRate = Number(formData.get("tipRate"));
     const data = convertToNestedItemObject(formData);
+
     if (
         !user 
         || !paymentMethodId || typeof paymentMethodId !== 'string'
@@ -44,7 +88,7 @@ export async function createSale(
         price: number;
         cost: number;
     }
-    var planeAmount = 0;
+    var subTotalAmount = 0;
     const saleItemsData: SaleItem[] = [];
 
     for (const stockId of Object.keys(data.item)) {
@@ -67,19 +111,19 @@ export async function createSale(
                 quantity: stock.quantity - quantity,
             }
         })
-        planeAmount += price * quantity * 100;
+        subTotalAmount += price * quantity;
         saleItemsData.push({
             stockId: stockId,
             saleTransactionId: '',
             quantity: quantity,
-            price: price * 100,
+            price: price,
             cost: cost,
         });
     };
-    const discountAmount = Math.round(planeAmount * discountRate / 100);
-    const taxAmount =  Math.round( (planeAmount - discountAmount) * taxRate / 100 );
-    const tipAmount = Math.round( (planeAmount - discountAmount + taxAmount) * tipRate / 100 );
-    const totalAmount = planeAmount - discountAmount + taxAmount + tipAmount;
+    const discountAmount = Math.round(subTotalAmount * discountRate / 100);
+    const taxAmount =  Math.round( (subTotalAmount - discountAmount) * taxRate / 100 );
+    const tipAmount = Math.round( (subTotalAmount - discountAmount + taxAmount) * tipRate / 100 );
+    const totalAmount = subTotalAmount - discountAmount + taxAmount + tipAmount;
 
     const saleTransaction = await prisma.saleTransaction.create({
         data: {
@@ -89,6 +133,7 @@ export async function createSale(
             discountAmount: discountAmount,
             taxAmount:taxAmount,
             tipAmount:tipAmount,
+            subTotalAmount:subTotalAmount,
             totalAmount:totalAmount,
         }
     })

@@ -72,7 +72,7 @@ export default function TransactionTable({ stocks, paymentMethods }: { stocks: S
             <ul>
                 {
                     stocks.map((stock) => (
-                        <li key={stock.id} className='cursor-pointer flex' onClick={handle({ id: stock.id, name: stock.name, price: stock.price })}>
+                        <li key={stock.id} className='cursor-pointer flex' onClick={handle({ id: stock.id, name: stock.name, price: stock.price / multiplier })}>
                             <p>{stock.name}</p>
                             <p>{CONSTANTS.CAD_SIGN}{stock.price > 0 ? stock.price / multiplier : 0}</p>
                         </li>
