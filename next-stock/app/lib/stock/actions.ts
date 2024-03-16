@@ -4,7 +4,7 @@ import { getOrganizationId, getUserId } from '@/app/lib/actions';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { PrismaClient } from '@prisma/client';
-import type { Purchase, Stock, User } from '@prisma/client';
+import type { Purchase, Stock, SaleItem, User } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -132,4 +132,16 @@ export async function getPurchases(stockId: string): Promise<(Purchase & { user:
     },
   })
   return purchases ?? null;
+}
+
+export async function getSaleItemsById(stockId: string): Promise<SaleItem[] | null> {
+  const saleItems = await prisma.saleItem.findMany({
+      where: {
+          stockId: stockId,
+      },
+      orderBy: {
+          createdAt: 'desc',
+      }
+  });
+  return saleItems;
 }

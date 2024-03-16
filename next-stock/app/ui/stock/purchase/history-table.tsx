@@ -35,30 +35,33 @@ export default function PurchaseHistorytable(prop: {stockId: string}) {
     }, [prop.stockId]);
     if(purchases.length === 0) return <p>No purchase history.</p>
     return (
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Quantity</th>
-                    <th>Cost</th>
-                    <th>User</th>
-                </tr>
-            </thead>
-            <tbody>
-                {
-                    purchases ? 
-                    purchases.map((purchase) => (
-                        <tr key={purchase.id}>
-                            <td>{changeDateFormat(purchase.createdAt)}</td>
-                            <td>{purchase.quantity}</td>
-                            <td>{purchase.cost > 0 ? purchase.cost / multiplier : 0}</td>
-                            <td>{purchase.user.firstName} {purchase.user.lastName}</td>
-                        </tr>
-                    ))
-                    : <p>Loading...</p>
-                }
-            </tbody>
-        </table>
+        <div className='m-3'>
+            <h2>Purchase History</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Quantity</th>
+                        <th>Cost</th>
+                        <th>User</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        purchases ? 
+                        purchases.map((purchase) => (
+                            <tr key={purchase.id}>
+                                <td>{changeDateFormat(purchase.createdAt)}</td>
+                                <td>{purchase.quantity}</td>
+                                <td>{purchase.cost > 0 ? purchase.cost / multiplier : 0}</td>
+                                <td>{purchase.user.firstName} {purchase.user.lastName}</td>
+                            </tr>
+                        ))
+                        : <p>Loading...</p>
+                    }
+                </tbody>
+            </table>
+        </div>
     );
 }
 
@@ -72,4 +75,4 @@ function changeDateFormat(date: Date | string) {
       minute: '2-digit',
       hour12: false
     }).format(new Date(date)).replace(',', '');
-  }
+}

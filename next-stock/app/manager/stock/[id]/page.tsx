@@ -2,16 +2,17 @@ import { CONSTANTS } from '@/app/constants';
 import SideNav from "@/app/ui/sidenav";
 import { getStockById } from "@/app/lib/stock/actions";
 import PurchaseHistorytable from "@/app/ui/stock/purchase/history-table"
+import SoldHistorytable from '@/app/ui/stock/sold/history-table';
 
 export default function Page({ params }: { params: { id: string } }) {
     const id = params.id;  
-    
     return (
         <div>
             <SideNav />
-            <h1>Purchase Stock</h1>
+            <h1>Stock Details</h1>
             <StockTable stockId={id} />
             <PurchaseHistorytable stockId={id} />
+            <SoldHistorytable stockId={id}/>
         </div>
     );
 }
@@ -20,7 +21,7 @@ export async function StockTable(prop: {stockId:string}) {
     const stock = await getStockById(prop.stockId);
     const multiplier = CONSTANTS.CAD_MULTIPLIER;
     return (
-        <table>
+        <table className='m-3'>
             <thead>
                 <tr>
                     <th>name</th>
