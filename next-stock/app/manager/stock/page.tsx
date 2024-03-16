@@ -36,7 +36,7 @@ export async function Stocks() {
       </thead>
       <tbody>
       {stocks.map((stock: Stock) => (
-        <tr>
+        <tr key={stock.id}>
           <td>{stock.name}</td>
           <td>{stock.quantity}</td>
           <td>{stock.price / multiplier}</td>

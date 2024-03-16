@@ -6,7 +6,7 @@ interface PurchaseFormProps {
     stockId: string;
   }
 
-export default function purchaseForm(prop: PurchaseFormProps) {    
+export default function PurchaseForm(prop: PurchaseFormProps) {    
     const [errorMessage, formAction] = useFormState(createPurchase, undefined)
     return (
         <form action={formAction}>
