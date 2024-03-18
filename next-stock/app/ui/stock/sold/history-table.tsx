@@ -17,7 +17,7 @@ export default function SoldHistorytable(prop: {stockId: string}) {
 
         fetchPurchases();
     }, [prop.stockId]);
-    if(saleItems.length === 0) return <p>No purchase history.</p>
+    if(saleItems.length === 0) return <p>No sold history.</p>
     return (
         <div className='m-3'>
             <h2>Sold History</h2>

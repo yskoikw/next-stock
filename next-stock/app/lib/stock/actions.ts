@@ -32,7 +32,7 @@ export async function getStockById(id: string): Promise<Stock | null> {
 }
 
 //sign up & create org
-export async function createProductAndStock(
+export async function createStock(
   prevState: string | undefined,
   formData: FormData,
 ) {
@@ -66,7 +66,7 @@ export async function createProductAndStock(
       asset: asset
     },
   });
-  return  'success';
+  redirect(`/manager/stock/${stock.id}`);
 }
 
 export async function createPurchase(

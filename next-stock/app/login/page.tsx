@@ -1,6 +1,5 @@
 "use client"
 import { authenticate } from '@/app/lib/actions';
-import { PrismaClient } from '@prisma/client';
 import { useFormState, useFormStatus } from "react-dom";
  
 export default function Page() {

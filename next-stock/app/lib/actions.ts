@@ -3,6 +3,8 @@ import bcrypt from 'bcryptjs';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 import { PrismaClient } from '@prisma/client';
+import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 import type { User } from '@/app/lib/definitions';
 import { auth } from "@/auth.config";
 
@@ -79,8 +81,8 @@ export async function signup(
       lastName: lastName,
     },
   });
-	// return redirect("/");
-  return { message: `success` };
+	revalidatePath('/login');
+  redirect('/login');
 }
 
 export async function getSessionUser(): Promise<User | null> {
