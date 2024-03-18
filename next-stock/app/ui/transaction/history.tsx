@@ -19,7 +19,7 @@ export default function History() {
       }
       fetchPurchases();
     }, []);
-    if(saleTransactions.length === 0) return <p>No purchase history.</p>
+    if(saleTransactions.length === 0) return <p>No sale history.</p>
     return (
         <div>
             {
