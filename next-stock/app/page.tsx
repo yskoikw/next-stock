@@ -1,74 +1,120 @@
+import { BlueButtonLarge, WhiteButtonLarge } from "@/app/ui/common/buttons";
+import { CONSTANTS } from "@/app/constants";
+import Header from "@/app/ui/common/header";
+import { IconCircle } from "@/app/ui/common/icon";
 import Image from "next/image";
+import Link from 'next/link';
+import Footer from "@/app/ui/common/footer";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-           Best stock management system for retail stores.&nbsp;
-        </p>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
+    <main className="">
+      <Header />
+      <div id="fv" className="flex items-stretch py-8 pl-24">
+        <div className="flex flex-col items-start justify-between">
+          <div className="pt-20 pb-5">
+            <h2 className="text-[42px] font-bold">Best stock management system for retail stores</h2>
+            <p className="text-2xl">NextStock helps stock management simply for every retail stores.</p>
+          </div>  
+          <div className="py-5 w-full">
+            <p className="text-xl mb-1">30-days free trial with NO credit card.</p>
+            <Link href={`/manager/signup`} className="block max-w-lg">
+              <BlueButtonLarge text="Free trial" />
+            </Link>
+          </div>
+        </div>
         <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+          className="ml-11"
+          src="/fv.png"
+          alt="main image"
+          width={900}
+          height={900}
+         />
       </div>
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="/signup"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Sign up{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Register and Start
-          </p>
-        </a>
-
-        <a
-          href="login"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Login{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Do you have an account?
-          </p>
-        </a>
-
-        <a
-          href="https://github.com/yskoikw/next-stock"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Github{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Do you have any ideas or found any bags?<br />
-            Let me know by creating an issue.
-          </p>
-        </a>
+      <div id="message-1" className="text-white text-center px-24 py-16 bg-darkBlue">
+        <h2 className="text-[42px] font-bold my-4">Don’t spend time for stock counting.</h2>
+        <p className="text-2xl">Transform Your Retail Operations with Our All-in-One Inventory and POS Solution.</p>
       </div>
+
+      <div className="px-24 py-16">
+        <ul className="flex contents-between flex-wrap">
+          <Feature 
+            icon="production_quantity_limits" 
+            dt="Inventory Management" 
+            dd="You always know what's available, what's running low, and what needs replenishment."
+          />
+          <Feature
+           icon="payments"
+           dt="POS System"
+           dd="Tailor every business enhanced cash register."
+          />
+          <Feature
+           icon="price_check"
+           dt="Cost Insight"
+           dd="Gain insight into your cost structure with our moving average cost method."
+          />
+          <Feature
+           icon="bubble"
+           dt="Stock Auto-Adjust"
+           dd="No need to manually update your stock count after every sale."
+          />
+          <Feature
+           icon="shipping"
+           dt="Procurement Tracking"
+           dd="You can track purchases and automatically updates your inventory levels."
+          />
+          <Feature
+           icon="monitoring"
+           dt="Dashboard Insights"
+           dd="Access vital business insights at a glance."
+          />
+        </ul>
+      </div>
+
+      <div id="portfolio" className="px-24 py-16 text-center relative  after:block after:w-48 after:h-48 after:absolute after:top-0 after:inset-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:dark:from-red-500 after:dark:via-[#1B6CE7] after:dark:opacity-50">
+        <h2 className="text-[42px] font-bold my-4">This is a portfolio</h2>
+        <p className="text-lg">
+          This is created for my experience and portfolio. 
+          <br />You can use it 30-days free.
+          <br />I appreciate for any feed backs for <a href={CONSTANTS.GITHUB} target="_blank" className="text-blue underline">GitHub</a>.
+          <br />If you want to continue NextStock after 30-days, let me know from blow email.
+        </p>
+        <a href={`mailto:${CONSTANTS.EMAIL}`} className="text-blue underline">{CONSTANTS.EMAIL}</a>
+      </div>
+
+      <div id="cta" className="text-white text-center px-24 py-16 bg-darkBlue flex items-center flex-col">
+        <p className="text-2xl">Do not count your stocks manually</p>
+        <Link href={`/manager/signup`} className="block w-96 my-12">
+          <WhiteButtonLarge text="Free trial"  />
+        </Link>
+      </div>
+
+      <Footer />
     </main>
+  );
+}
+
+
+function Feature(
+  {
+    icon,
+    dt,
+    dd
+  }: 
+  {
+    icon: string,
+    dt: string,
+    dd: string
+  }
+) {
+  return (
+    <li className="w-1/3 pr-7 mb-10">
+      <IconCircle name={icon}/>
+      <dl>
+        <dt className="font-bold text-2xl my-3">{dt}</dt>
+        <dd className="text-lg">{dd}</dd>
+      </dl>
+    </li>
   );
 }
