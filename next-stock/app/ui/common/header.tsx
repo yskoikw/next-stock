@@ -1,6 +1,5 @@
 import { BlueButton, ButtonTransparent } from "@/app/ui/common/buttons";
 import Logo from "@/app/ui/common/Logo";
-import Image from "next/image";
 import Link from 'next/link';
 
 export default function Header() {

@@ -2,7 +2,7 @@ import Logo from "@/app/ui/common/Logo";
 
 export default function Footer() {
     return (
-        <div id="footer" className="mb-3">
+        <div id="footer" className="mb-3 border-t-glay border-solid border">
             <ul className="flex justify-end mb-3">
                 <li>
                     <a

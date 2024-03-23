@@ -18,6 +18,7 @@ const config: Config = {
         'darkBlue': '#2A4F87',
         'black': '#3D3D3D',
         'glay': '#7F7F7F',
+        'paleGlay': '#A5A5A5',
         'bgWhite': '#F8F7F7',
       }
     },
