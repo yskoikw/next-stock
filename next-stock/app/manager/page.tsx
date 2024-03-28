@@ -5,8 +5,8 @@ export default async function Page() {
   const user = await getSessionUser();
 	return (
     <div>
-      <SideNav />
-      <h1>Hi, {user?.firstName}!</h1>
+      <h2 className='text-[42px] font-bold'>top page</h2>
+      <p>Hi, {user?.firstName}!</p>
     </div>
   );
 }

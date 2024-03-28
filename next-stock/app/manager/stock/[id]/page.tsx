@@ -1,18 +1,17 @@
-
-import SideNav from "@/app/ui/sidenav";
-import PurchaseHistorytable from "@/app/ui/stock/purchase/history-table"
-import SoldHistorytable from '@/app/ui/stock/sold/history-table';
-import StockTable from "@/app/ui/stock/stock-table";
+import Link from 'next/link';
+import { WhiteButton } from '@/app/ui/common/buttons';
+import StockDashboard from "@/app/ui/stock/stock-dashboard";
+import StockTable from '@/app/ui/stock/stock-table';
 
 export default function Page({ params }: { params: { id: string } }) {
     const id = params.id;
     return (
         <div>
-            <SideNav />
-            <h1>Stock Details</h1>
+            <StockDashboard stockId={id} />
+            <Link href={`/manager/stock/${id}/purchase`} className='inline-block'>
+                <WhiteButton text='Purchase' />
+            </Link>
             <StockTable stockId={id} />
-            <PurchaseHistorytable stockId={id} />
-            <SoldHistorytable stockId={id} />
         </div>
     );
 }

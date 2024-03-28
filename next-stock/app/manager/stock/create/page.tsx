@@ -3,9 +3,8 @@ import SideNav from "@/app/ui/sidenav";
 
 export default function Page() {
   return (
-    <>
-      <SideNav />
-      <h1>Create New Stock</h1>
+    <>     
+      <h2 className="text-[25px] font-bold my-4">Create a new stock</h2>
       <From />
     </>
   );

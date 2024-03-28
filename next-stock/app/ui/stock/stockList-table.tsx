@@ -1,57 +1,89 @@
+'use client'
+import { ColumnDef } from "@tanstack/react-table";
 import { CONSTANTS } from '@/app/constants';
 import { getStocks } from "@/app/lib/stock/actions";
+import React, { useEffect, useMemo, useState } from 'react';
 import type { Stock } from '@prisma/client';
-import Link from 'next/link';
+import { WhiteButtonSmall } from '@/app/ui/common/buttons';
+import Table from '@/app/ui/common/table';
 
-export default async function Stocks() {
-    const stocks = await getStocks();
+type dataType = {
+  id: string;
+  name: string;
+  quantity: number;
+  asset: number;
+  cost: number;
+  price: number;
+}
+
+export default function Stocks() {  
+  const [stocks, setStocks] = useState<Stock[]>([]);
+    useEffect(() => {
+      async function fetchStocks() {
+        const fetchedStocks = await getStocks();
+        if(!fetchedStocks) return null;
+        setStocks(fetchedStocks);
+      }
+      fetchStocks();
+    }, []); 
     const multiplier = CONSTANTS.CAD_MULTIPLIER;
-    if(!stocks) return null;
-    return (
-      <table className='m-5'>
-        <thead>
-          <tr>
-            <th>name</th>
-            <th>quantity</th>
-            <th>price</th>
-            <th>asset($)</th>
-          </tr>
-        </thead>
-        <tbody>
-        {
-        stocks.length === 0 ? 
-        (
-          <tr>
-            <td>no stock data</td>
-          </tr>
-        ) :
-        (
+    const data = useMemo(() => stocks.map((stock: Stock) => ({
+      id: stock.id,
+      name: stock.name,
+      quantity: stock.quantity,
+      asset: stock.asset / multiplier,
+      cost: Math.round(stock.asset / stock.quantity) / multiplier,
+      price: stock.price / multiplier,
+    })), [stocks, multiplier]);
 
-        
-        stocks.map((stock: Stock) => (
-          <tr key={stock.id}>
-            <td>{stock.name}</td>
-            <td>{stock.quantity}</td>
-            <td>{stock.price / multiplier}</td>
-            <td>{stock.asset / multiplier}</td>
-            <td>
-            <Link
-              href={`/manager/stock/${stock.id}`}
-              className="rounded-md border p-2 hover:bg-gray-100"
-            >
-              Detail
-            </Link>
-            <Link
-              href={`/manager/stock/${stock.id}/purchase`}
-              className="rounded-md border p-2 hover:bg-gray-100"
-            >
-              Purchase {/* ENG: Delivery, Purchase, Edit? */}
-            </Link>
-            </td>
-          </tr>
-        ))
-        )}
-        </tbody>
-      </table>
-    )
-  }
+    const columns: ColumnDef<dataType>[]  = [
+      {
+        accessorKey: 'name',
+        header: 'Name',
+      },
+      {
+        accessorKey: 'quantity',
+        header: 'Quantity',
+      },
+      {
+        accessorKey: 'asset',
+        header: 'Asset',
+      },
+      {
+        accessorKey: 'cost',
+        header: 'Cost',
+      },
+      {
+        accessorKey: 'price',
+        header: 'Price',
+      },
+      {
+        id: "actions",
+        cell: ({ row }) => {
+          const stock = row.original;
+          return (
+              <div style={{ cursor: "pointer" }}>
+                <a href={`/manager/stock/${stock.id}/purchase`}>
+                  <WhiteButtonSmall text='Purchase' />
+                </a>
+              </div>
+          );
+        },
+      },
+      {
+        id: "actions",
+        cell: ({ row }) => {
+          const stock = row.original;
+          return (
+              <div style={{ cursor: "pointer" }}>
+                <a href={`/manager/stock/${stock.id}`}>
+                  <WhiteButtonSmall text='Detail' />
+                </a>
+              </div>
+          );
+        },
+      },
+    ];
+    
+    return <Table data={data} columns={columns}/>
+}

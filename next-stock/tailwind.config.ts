@@ -20,6 +20,8 @@ const config: Config = {
         'glay': '#7F7F7F',
         'paleGlay': '#A5A5A5',
         'bgWhite': '#F8F7F7',
+        'red': '#FF0000',
+        'paleRed': '#FFDBDB',
       }
     },
   },

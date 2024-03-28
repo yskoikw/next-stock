@@ -1,8 +1,11 @@
 
 'use client'
+import { ColumnDef } from "@tanstack/react-table";
 import { CONSTANTS } from '@/app/constants';
 import { getPurchases } from "@/app/lib/stock/actions";
-import React, { useEffect, useState } from 'react';
+import type { Purchase } from '@prisma/client';
+import React, { useEffect, useMemo, useState } from 'react';
+import Table from '@/app/ui/common/table';
 
 type FechedPurchase = {
     id: string;
@@ -14,65 +17,69 @@ type FechedPurchase = {
     updatedAt: Date;
     deletedAt: Date | null;
     user: {
-      firstName: string;
-      lastName: string;
+        firstName: string;
+        lastName: string;
     };
-  };
+};
 
-export default function PurchaseHistorytable(prop: {stockId: string}) {
-    "use client"
+type dataType = {
+    date: string;
+    quantity: number;
+    cost: number;
+    user: string;
+}
+
+export default function PurchaseHistorytable(prop: { stockId: string }) {
     const [purchases, setPurchases] = useState<FechedPurchase[]>([]);
     const multiplier = CONSTANTS.CAD_MULTIPLIER;
 
     useEffect(() => {
-      async function fetchPurchases() {
-        const fetchedPurchases = await getPurchases(prop.stockId);
-        if(!fetchedPurchases) return null;
-        setPurchases(fetchedPurchases);
-      }
-  
-      fetchPurchases();
+        async function fetchPurchases() {
+            const fetchedPurchases = await getPurchases(prop.stockId);
+            if (!fetchedPurchases) return null;
+            setPurchases(fetchedPurchases);
+        }
+
+        fetchPurchases();
     }, [prop.stockId]);
-    if(purchases.length === 0) return <p>No purchase history.</p>
-    return (
-        <div className='m-3'>
-            <h2>Purchase History</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Quantity</th>
-                        <th>Cost</th>
-                        <th>User</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        purchases ? 
-                        purchases.map((purchase) => (
-                            <tr key={purchase.id}>
-                                <td>{changeDateFormat(purchase.createdAt)}</td>
-                                <td>{purchase.quantity}</td>
-                                <td>{purchase.cost > 0 ? purchase.cost / multiplier : 0}</td>
-                                <td>{purchase.user.firstName} {purchase.user.lastName}</td>
-                            </tr>
-                        ))
-                        : <p>Loading...</p>
-                    }
-                </tbody>
-            </table>
-        </div>
-    );
+
+    const data = useMemo(() => purchases.map((purchase: FechedPurchase) => ({
+        date: changeDateFormat(purchase.createdAt),
+        quantity: purchase.quantity,
+        cost: purchase.cost,
+        user: purchase.user.firstName + ' ' + purchase.user.lastName,
+    })), [purchases, multiplier]);
+
+    const columns: ColumnDef<dataType>[] = [
+        {
+            accessorKey: 'date',
+            header: 'Date',
+        },
+        {
+            accessorKey: 'quantity',
+            header: 'Quantity',
+        },
+        {
+            accessorKey: 'cost',
+            header: `Cost (${CONSTANTS.CAD_SIGN})`,
+        },
+        {
+            accessorKey: 'user',
+            header: 'User',
+        },
+    ];
+
+    return <Table data={data} columns={columns} noBorder={true} />;
 }
 
 function changeDateFormat(date: Date | string) {
     return new Intl.DateTimeFormat('en-CA', {
-      timeZone: 'America/Los_Angeles',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
+        timeZone: 'America/Los_Angeles',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
     }).format(new Date(date)).replace(',', '');
 }
