@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export default function Header() {
     return (
-        <div id="header" className="w-full flex items-center justify-between p-3 border-b-glay border-solid border">
+        <div id="header" className="w-full flex items-center justify-between p-3 border-b-paleGlay border-solid border">
             <Logo />
             <div className="flex items-center">
                 <Link href={`/login`} >

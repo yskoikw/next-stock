@@ -1,7 +1,7 @@
 import { BlueButtonLarge, WhiteButtonLarge } from "@/app/ui/common/buttons";
 import { CONSTANTS } from "@/app/constants";
 import Header from "@/app/ui/common/header";
-import { IconCircle } from "@/app/ui/common/icon";
+import Feature from "@/app/ui/toppage/feature";
 import Image from "next/image";
 import Link from 'next/link';
 import Footer from "@/app/ui/common/footer";
@@ -92,29 +92,5 @@ export default function Home() {
 
       <Footer />
     </main>
-  );
-}
-
-
-function Feature(
-  {
-    icon,
-    dt,
-    dd
-  }: 
-  {
-    icon: string,
-    dt: string,
-    dd: string
-  }
-) {
-  return (
-    <li className="w-1/3 pr-7 mb-10">
-      <IconCircle name={icon}/>
-      <dl>
-        <dt className="font-bold text-2xl my-3">{dt}</dt>
-        <dd className="text-lg">{dd}</dd>
-      </dl>
-    </li>
   );
 }
