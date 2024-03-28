@@ -15,7 +15,6 @@ type dataType = {
 
 export default function SaleHistorytable(prop: {stockId: string}) {
     const [saleItems, setSaleItems] = useState<SaleItem[]>([]);
-    const multiplier = CONSTANTS.CAD_MULTIPLIER;
 
     useEffect(() => {
         async function fetchPurchases() {
@@ -31,7 +30,7 @@ export default function SaleHistorytable(prop: {stockId: string}) {
         date: changeDateFormat(saleItem.createdAt),
         quantity: saleItem.quantity,
         cost: saleItem.cost,
-    })), [saleItems, multiplier]);
+    })), [saleItems]);
 
     const columns: ColumnDef<dataType>[] = [
         {

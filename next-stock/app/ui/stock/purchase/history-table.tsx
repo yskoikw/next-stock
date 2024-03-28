@@ -3,7 +3,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { CONSTANTS } from '@/app/constants';
 import { getPurchases } from "@/app/lib/stock/actions";
-import type { Purchase } from '@prisma/client';
 import React, { useEffect, useMemo, useState } from 'react';
 import Table from '@/app/ui/common/table';
 
@@ -31,7 +30,6 @@ type dataType = {
 
 export default function PurchaseHistorytable(prop: { stockId: string }) {
     const [purchases, setPurchases] = useState<FechedPurchase[]>([]);
-    const multiplier = CONSTANTS.CAD_MULTIPLIER;
 
     useEffect(() => {
         async function fetchPurchases() {
@@ -48,7 +46,7 @@ export default function PurchaseHistorytable(prop: { stockId: string }) {
         quantity: purchase.quantity,
         cost: purchase.cost,
         user: purchase.user.firstName + ' ' + purchase.user.lastName,
-    })), [purchases, multiplier]);
+    })), [purchases]);
 
     const columns: ColumnDef<dataType>[] = [
         {
